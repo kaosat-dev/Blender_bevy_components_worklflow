@@ -1,4 +1,4 @@
-pub use bevy::prelude::*;
+pub(crate) use bevy::prelude::*;
 
 use crate::{BlueprintInfo, GameWorldTag, HideUntilReady, SpawnBlueprint};
 
