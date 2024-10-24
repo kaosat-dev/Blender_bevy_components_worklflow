@@ -11,26 +11,26 @@ pub struct HiearchyDebugTag;
 pub fn setup_hierarchy_debug(mut commands: Commands) {
     // a place to display the extras on screen
     commands.spawn((
-        TextBundle::from_section(
-            "",
-            TextStyle {
-                color: LinearRgba {
-                    red: 1.0,
-                    green: 1.0,
-                    blue: 1.0,
-                    alpha: 1.0,
-                }
-                .into(),
-                font_size: 15.,
-                ..default()
-            },
-        )
-        .with_style(Style {
+        Node {
             position_type: PositionType::Absolute,
             top: Val::Px(12.0),
             left: Val::Px(12.0),
             ..default()
-        }),
+        },
+        Text("".to_string()),
+        TextFont {
+            font_size: 15.,
+            ..default()
+        },
+        TextColor(LinearRgba {
+            red: 1.0,
+            green: 1.0,
+            blue: 1.0,
+            alpha: 1.0,
+        }.into()),
+        TextLayout {
+            ..default()
+        },
         HiearchyDebugTag,
     ));
 }
@@ -93,7 +93,8 @@ pub fn draw_hierarchy_debug(
     all_global_transforms: Query<&GlobalTransform>,
 
     to_check: Query<&EnumTest>, //Query<(&BlueprintInstanceReady, &BlueprintAssets)>,
-    mut display: Query<&mut Text, With<HiearchyDebugTag>>,
+    display: Query<Entity, With<HiearchyDebugTag>>,
+    mut writer: TextUiWriter,
 ) {
     let mut hierarchy_display: Vec<String> = vec![];
 
@@ -118,8 +119,8 @@ pub fn draw_hierarchy_debug(
 
         //
     }
-    let mut display = display.single_mut();
-    display.sections[0].value = hierarchy_display.join("\n");
+    let display = display.single();
+    *writer.text(display, 0) = hierarchy_display.join("\n");
 }
 
 ////////:just some testing for gltf extras
@@ -133,7 +134,8 @@ fn __check_for_gltf_extras(
         Option<&GltfMeshExtras>,
         Option<&GltfMaterialExtras>,
     )>,
-    mut display: Query<&mut Text, With<HiearchyDebugTag>>,
+    display: Query<Entity, With<HiearchyDebugTag>>,
+    mut writer: TextUiWriter,
 ) {
     let mut gltf_extra_infos_lines: Vec<String> = vec![];
 
@@ -160,14 +162,15 @@ fn __check_for_gltf_extras(
             );
             gltf_extra_infos_lines.push(formatted_extras);
         }
-        let mut display = display.single_mut();
-        display.sections[0].value = gltf_extra_infos_lines.join("\n");
+        let display = display.single();
+        *writer.text(display, 0) = gltf_extra_infos_lines.join("\n");
     }
 }
 
 fn __check_for_component(
     specific_components: Query<(Entity, Option<&Name>, &RedirectPropHitImpulse)>,
-    mut display: Query<&mut Text, With<HiearchyDebugTag>>,
+    display: Query<Entity, With<HiearchyDebugTag>>,
+    mut writer: TextUiWriter,
 ) {
     let mut info_lines: Vec<String> = vec![];
     for (__entiity, name, enum_complex) in specific_components.iter() {
@@ -178,8 +181,9 @@ fn __check_for_component(
         info_lines.push(data);
         println!("yoho component");
     }
-    let mut display = display.single_mut();
-    display.sections[0].value = info_lines.join("\n");
+
+    let display = display.single();
+    *writer.text(display, 0) = info_lines.join("\n");
 }
 
 pub struct HiearchyDebugPlugin;

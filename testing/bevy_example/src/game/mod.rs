@@ -13,7 +13,9 @@ use blenvy::{
 
 use crate::{AppState, GameState};
 use bevy::{
-    prelude::*, render::view::screenshot::ScreenshotManager, time::common_conditions::on_timer,
+    prelude::*,
+    time::common_conditions::on_timer,
+    render::view::screenshot::{save_to_disk, Capturing, Screenshot},
     window::PrimaryWindow,
 };
 
@@ -116,12 +118,11 @@ fn validate_export(
 }
 
 fn generate_screenshot(
-    main_window: Query<Entity, With<PrimaryWindow>>,
-    mut screenshot_manager: ResMut<ScreenshotManager>,
+    mut commands: Commands,
 ) {
-    screenshot_manager
-        .save_screenshot_to_disk(main_window.single(), "screenshot.png")
-        .unwrap();
+    commands
+      .spawn(Screenshot::primary_window())
+      .observe(save_to_disk("screenshot.png"));
 }
 
 fn exit_game(mut app_exit_events: ResMut<Events<bevy::app::AppExit>>) {

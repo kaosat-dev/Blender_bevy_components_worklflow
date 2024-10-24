@@ -84,7 +84,7 @@ pub(crate) fn load_game(
     let _dynamic_data = commands
         .spawn((
             DynamicSceneBundle {
-                scene: asset_server.load(load_request.path.clone()),
+                scene: DynamicSceneRoot(asset_server.load(load_request.path.clone())),
                 ..default()
             },
             bevy::prelude::Name::from("World_dynamic"),

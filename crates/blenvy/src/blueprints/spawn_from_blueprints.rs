@@ -515,7 +515,7 @@ pub(crate) fn blueprints_assets_loaded(
 
         commands.entity(entity).insert((
             SceneBundle {
-                scene: scene.clone(),
+                scene: SceneRoot(scene.clone()),
                 transform: transforms,
                 ..Default::default()
             },
@@ -709,7 +709,7 @@ pub(crate) fn blueprints_cleanup_spawned_scene(
         }
 
         // copy components into from blueprint instance's blueprint_root_entity to original entity
-        commands.add(CopyComponents {
+        commands.queue(CopyComponents {
             source: blueprint_root_entity,
             destination: original,
             exclude: vec![TypeId::of::<Parent>(), TypeId::of::<Children>()],
@@ -743,7 +743,7 @@ pub(crate) fn blueprints_cleanup_spawned_scene(
                     let transitions = AnimationTransitions::new();
                     commands
                         .entity(entity_with_player)
-                        .insert((transitions, animations.graph.clone()));
+                        .insert((transitions, AnimationGraphHandle(animations.graph.clone())));
                 }
             }
             // FIXME VERY convoluted, but it works
