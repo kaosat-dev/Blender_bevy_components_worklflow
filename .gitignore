@@ -2,3 +2,4 @@
 target/
 __pycache__/
 Cargo.lock
+/.idea
