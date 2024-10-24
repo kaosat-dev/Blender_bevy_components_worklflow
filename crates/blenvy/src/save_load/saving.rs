@@ -86,7 +86,7 @@ pub(crate) fn save_game(world: &mut World) {
     let mut save_path: String = "".into();
     let mut events = world.resource_mut::<Events<SavingRequest>>();
 
-    for event in events.get_reader().read(&events) {
+    for event in events.get_cursor().read(&events) {
         info!("SAVE EVENT !! {:?}", event);
         save_path.clone_from(&event.path);
     }

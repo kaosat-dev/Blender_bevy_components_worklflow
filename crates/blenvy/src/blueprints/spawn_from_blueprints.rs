@@ -514,11 +514,8 @@ pub(crate) fn blueprints_assets_loaded(
         //println!("ANIMATION INFOS: {:?}", animation_infos);
 
         commands.entity(entity).insert((
-            SceneBundle {
-                scene: SceneRoot(scene.clone()),
-                transform: transforms,
-                ..Default::default()
-            },
+            SceneRoot(scene.clone()),
+            transforms,
             OriginalChildren(original_children),
             BlueprintAnimations {
                 // TODO: perhaps swap this out with InstanceAnimations depending on whether we are spawning a level or a simple blueprint
