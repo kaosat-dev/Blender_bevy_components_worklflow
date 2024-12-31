@@ -9,7 +9,7 @@ use bevy::{
     gltf::{GltfExtras, GltfMaterialExtras, GltfMeshExtras, GltfSceneExtras},
     hierarchy::Parent,
     log::{debug, warn},
-    reflect::{Reflect, PartialReflect, TypeRegistration},
+    reflect::{PartialReflect, TypeRegistration},
     utils::HashMap,
 };
 
