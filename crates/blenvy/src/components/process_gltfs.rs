@@ -9,7 +9,7 @@ use bevy::{
     gltf::{GltfExtras, GltfMaterialExtras, GltfMeshExtras, GltfSceneExtras},
     hierarchy::Parent,
     log::{debug, warn},
-    reflect::{Reflect, TypeRegistration},
+    reflect::{PartialReflect, TypeRegistration},
     utils::HashMap,
 };
 
@@ -20,9 +20,9 @@ fn find_entity_components(
     entity: Entity,
     name: Option<&Name>,
     parent: Option<&Parent>,
-    reflect_components: Vec<(Box<dyn Reflect>, TypeRegistration)>,
-    entity_components: &HashMap<Entity, Vec<(Box<dyn Reflect>, TypeRegistration)>>,
-) -> (Entity, Vec<(Box<dyn Reflect>, TypeRegistration)>) {
+    reflect_components: Vec<(Box<dyn PartialReflect>, TypeRegistration)>,
+    entity_components: &HashMap<Entity, Vec<(Box<dyn PartialReflect>, TypeRegistration)>>,
+) -> (Entity, Vec<(Box<dyn PartialReflect>, TypeRegistration)>) {
     // we assign the components specified /xxx_components objects to their parent node
     let mut target_entity = entity;
     // if the node contains "components" or ends with "_pa" (ie add to parent), the components will not be added to the entity itself but to its parent
@@ -40,10 +40,11 @@ fn find_entity_components(
     // if there where already components set to be added to this entity (for example when entity_data was refering to a parent), update the vec of entity_components accordingly
     // this allows for example blender collection to provide basic ecs data & the instances to override/ define their own values
     if entity_components.contains_key(&target_entity) {
-        let mut updated_components: Vec<(Box<dyn Reflect>, TypeRegistration)> = Vec::new();
+        let mut updated_components: Vec<(Box<dyn PartialReflect>, TypeRegistration)> = Vec::new();
         let current_components = &entity_components[&target_entity];
         // first inject the current components
         for (component, type_registration) in current_components {
+            //updated_components.push((component.clone().downcast().unwrap(), type_registration.clone()));
             updated_components.push((component.clone_value(), type_registration.clone()));
         }
         // then inject the new components: this also enables overwrite components set in the collection
@@ -62,7 +63,7 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
     let mut mesh_extras = world.query_filtered::<(Entity, Option<&Name>, &GltfMeshExtras, Option<&Parent>), (Added<GltfMeshExtras>, Without<GltfProcessed>)>();
     let mut material_extras = world.query_filtered::<(Entity, Option<&Name>, &GltfMaterialExtras, Option<&Parent>), (Added<GltfMaterialExtras>, Without<GltfProcessed>)>();
 
-    let mut entity_components: HashMap<Entity, Vec<(Box<dyn Reflect>, TypeRegistration)>> =
+    let mut entity_components: HashMap<Entity, Vec<(Box<dyn PartialReflect>, TypeRegistration)>> =
         HashMap::new();
 
     // let gltf_components_config = world.resource::<GltfComponentsConfig>();
@@ -150,7 +151,7 @@ pub fn add_components_from_gltf_extras(world: &mut World) {
                     entity_mut.insert(GltfProcessed);
                     continue;
                 };
-                reflected_component.insert(&mut entity_mut, &*component, &type_registry);
+                reflected_component.insert(&mut entity_mut, &*component.into_partial_reflect(), &type_registry);
 
                 entity_mut.insert(GltfProcessed); //
             }

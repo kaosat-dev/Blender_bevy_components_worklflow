@@ -11,6 +11,7 @@ use rand::Rng;
 // use game::*;
 
 mod component_examples;
+#[cfg(feature = "bevy-inspector")]
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use component_examples::*;
 
@@ -18,6 +19,7 @@ fn main() {
     App::new()
         .add_plugins((
             DefaultPlugins.set(AssetPlugin::default()),
+            #[cfg(feature = "bevy-inspector")]
             WorldInspectorPlugin::new(),
             BlenvyPlugin {
                 save_component_filter: SceneFilter::Allowlist(HashSet::from([

@@ -32,8 +32,8 @@ pub(crate) fn inject_materials(
         (),
         (
             With<Parent>,
-            With<Handle<StandardMaterial>>,
-            With<Handle<Mesh>>,
+            With<MeshMaterial3d<StandardMaterial>>,
+            With<Mesh3d>,
         ),
     >,
     assets_gltf: Res<Assets<Gltf>>,
@@ -95,7 +95,7 @@ pub(crate) fn inject_materials(
                             material_info.path.clone()
                         );
 
-                        commands.entity(*child).insert(material.clone());
+                        commands.entity(*child).insert(MeshMaterial3d(material.clone()));
                     }
                 }
             }

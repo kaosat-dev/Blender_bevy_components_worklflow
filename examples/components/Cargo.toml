@@ -5,5 +5,5 @@ edition = "2021"
 license = "MIT OR Apache-2.0"
 
 [dependencies]
-bevy = { version = "0.14", features = ["dynamic_linking"] }
+bevy = { version = "0.15", features = ["dynamic_linking"] }
 blenvy = { path = "../../crates/blenvy" }

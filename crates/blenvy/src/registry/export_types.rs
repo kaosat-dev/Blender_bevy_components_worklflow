@@ -152,26 +152,26 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
                 .collect::<Vec<_>>(),
             "items": false,
         }),
-        TypeInfo::List(info) => {
-            json!({
-                "long_name": t.type_path(),
-                "type": "array",
-                "typeInfo": "List",
-                "items": json!({"type": typ(info.item_type_path_table().path())}),
-            })
-        }
+        TypeInfo::List(info) => json!({
+            "long_name": t.type_path(),
+            "type": "array",
+            "typeInfo": "List",
+            "items": json!({
+                "type": typ(info.item_ty().path())
+            }),
+        }),
         TypeInfo::Array(info) => json!({
             "long_name": t.type_path(),
             "type": "array",
             "typeInfo": "Array",
-            "items": json!({"type": typ(info.item_type_path_table().path())}),
+            "items": json!({"type": typ(info.item_ty().path())}),
         }),
         TypeInfo::Map(info) => json!({
             "long_name": t.type_path(),
             "type": "object",
             "typeInfo": "Map",
-            "valueType": json!({"type": typ(info.value_type_path_table().path())}),
-            "keyType": json!({"type": typ(info.key_type_path_table().path())}),
+            "valueType": json!({"type": typ(info.value_ty().path())}),
+            "keyType": json!({"type": typ(info.key_ty().path())}),
         }),
         TypeInfo::Tuple(info) => json!({
             "long_name": t.type_path(),
@@ -184,7 +184,13 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
                 .collect::<Vec<_>>(),
             "items": false,
         }),
-        TypeInfo::Value(info) => json!({
+        TypeInfo::Set(info) => json!({
+            "long_name": t.type_path(),
+            "type": "set",
+            "typeInfo": "Set",
+            "items": json!({"type": typ(info.value_ty().path())}),
+        }),
+        TypeInfo::Opaque(info) => json!({
             "long_name": t.type_path(),
             "type": map_json_type(info.type_path()),
             "typeInfo": "Value",
