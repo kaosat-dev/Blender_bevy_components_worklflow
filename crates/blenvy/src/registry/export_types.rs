@@ -1,19 +1,21 @@
 use crate::{AssetRoot, BlenvyConfig};
 use bevy::{
-    log::info,
-    prelude::{AppTypeRegistry, ReflectComponent, ReflectResource, World},
+    asset::io::file::FileAssetReader, 
+    log::info, 
+    prelude::{AppTypeRegistry, ReflectComponent, ReflectResource, World}, 
     reflect::{TypeInfo, TypeRegistration, VariantInfo},
 };
 use serde_json::{json, Map, Value};
-use std::{fs::File, path::Path};
+use std::fs::File;
 
 pub fn export_types(world: &mut World) {
     let config = world
         .get_resource::<BlenvyConfig>()
         .expect("ExportComponentsConfig should exist at this stage");
 
+    let base_path = FileAssetReader::get_base_path();    
     let asset_root = world.resource::<AssetRoot>();
-    let registry_save_path = Path::join(&asset_root.0, &config.registry_save_path);
+    let registry_save_path = base_path.join(&asset_root.0).join(&config.registry_save_path);
     let writer = File::create(registry_save_path).expect("should have created schema file");
 
     let components_to_filter_out = &config.registry_component_filter.clone();
