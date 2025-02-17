@@ -1,0 +1,23 @@
+[package]
+name = "bevy_gltf_component_refs"
+version = "0.1.0"
+authors = ["Mark 'kaosat-dev' Moissette"]
+description = "Allows you to add reference components inside gltf files to relate components to each other on the Bevy side."
+homepage = "https://github.com/kaosat-dev/Blender_bevy_components_workflow"
+repository = "https://github.com/kaosat-dev/Blender_bevy_components_workflow"
+keywords = ["gamedev", "bevy", "assets", "gltf", "components"]
+categories = ["game-development"]
+edition = "2021"
+license = "MIT OR Apache-2.0"
+
+[lints]
+workspace = true
+
+[dependencies]
+bevy = { version = "0.13", default-features = false, features = ["bevy_scene"] }
+bevy_gltf_components = { version = "0.5", path = "../bevy_gltf_components" }
+
+[dev-dependencies]
+bevy = { version = "0.13", default-features = false, features = [
+  "dynamic_linking",
+] }
